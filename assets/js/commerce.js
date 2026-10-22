@@ -17,12 +17,19 @@
       slot.className = "field-error";
       (field || input.parentElement).appendChild(slot);
     }
+    if (!slot.id) slot.id = (input.id || "field") + "-error";
+    input.setAttribute("aria-describedby", slot.id);
     slot.textContent = message;
   }
 
   function clearErrors(form) {
     MB.qsa(".field-error", form).forEach(function (slot) { slot.textContent = ""; });
-    MB.qsa("[aria-invalid]", form).forEach(function (input) { input.removeAttribute("aria-invalid"); });
+    MB.qsa("[aria-invalid]", form).forEach(function (input) {
+      input.removeAttribute("aria-invalid");
+      if (input.getAttribute("aria-describedby") && input.getAttribute("aria-describedby").slice(-6) === "-error") {
+        input.removeAttribute("aria-describedby");
+      }
+    });
   }
 
   function validEmail(value) {
@@ -35,6 +42,13 @@
     host.innerHTML = '<div class="alert alert--' + (type || "error") + '">' +
       MB.icon(type === "success" ? "checkCircle" : "alert", 18) +
       "<div>" + message + "</div></div>";
+  }
+
+  function lockForm(form, label) {
+    const button = form.querySelector('button[type="submit"]');
+    if (!button) return;
+    button.disabled = true;
+    button.textContent = label || "Memproses...";
   }
 
   function authGate(message) {
@@ -90,7 +104,7 @@
         return String(item.email).toLowerCase() === email.value.trim().toLowerCase();
       });
 
-      if (!found || found.password !== password.value) {
+      if (!found || !MB.verifyPassword(found, password.value)) {
         alertBox(alert, "<strong>Email atau password demo tidak cocok.</strong><br>Gunakan kredensial demo yang tertera di halaman ini.", "error");
         setError(password, "Periksa kembali password demo Anda.");
         password.focus();
@@ -99,6 +113,7 @@
 
       MB.state.session = { email: found.email, role: found.role };
       MB.save();
+      lockForm(form, "Mengalihkan...");
       MB.toast("Selamat datang, " + found.name + ".", "success", "Login demo");
       window.setTimeout(function () { window.location.href = next; }, 450);
     });
@@ -160,6 +175,7 @@
       MB.state.users.push(newUser);
       MB.state.session = { email: newUser.email, role: "customer" };
       MB.save();
+      lockForm(form, "Membuat akun...");
       MB.toast("Akun demo berhasil dibuat.", "success", "Registrasi");
       window.setTimeout(function () { window.location.href = "account.html?welcome=1"; }, 500);
     });
@@ -326,6 +342,7 @@
         status: "pending",
         paymentMethod: payment.dataset.label
       };
+      lockForm(form, "Membuat order...");
       MB.state.orders.push(order);
       MB.state.lastOrderId = order.id;
       MB.state.checkout = null;
@@ -475,7 +492,7 @@
       '<div class="account-hero">' +
         '<div class="avatar" aria-hidden="true">' + MB.esc(initials) + "</div>" +
         "<div><h1>" + MB.esc(user.name) + "</h1><p>" + MB.esc(user.email) + " · " + (user.role === "admin" ? "Admin demo" : "Customer demo") + "</p></div>" +
-        '<div class="account-actions"><a class="btn btn-light btn-sm" href="my-library.html">My Library</a></div>' +
+        '<div class="account-actions"><a class="btn btn-light btn-sm" href="my-library.html">My Library</a><a class="btn btn-light btn-sm" href="#order-history">Riwayat order</a></div>' +
       "</div>" +
       '<div class="stat-grid mt-3">' +
         '<div class="stat-card"><div class="stat-head"><span class="stat-kicker">Produk dimiliki</span><span class="stat-icon">' + MB.icon("package", 17) + '</span></div><div class="stat-number">' + owned.length + '</div><div class="stat-trend">Akses demo</div></div>' +
@@ -484,7 +501,7 @@
         '<div class="stat-card"><div class="stat-head"><span class="stat-kicker">Status akun</span><span class="stat-icon">' + MB.icon("user", 17) + '</span></div><div class="stat-number" style="font-size:1.15rem">Aktif (demo)</div><div class="stat-trend">Tanpa autentikasi server</div></div>' +
       "</div>" +
       '<div class="admin-grid mt-3">' +
-        '<section class="admin-panel">' +
+        '<section class="admin-panel" id="order-history">' +
           '<div class="panel-head"><h2 class="panel-title">Order history</h2><a class="btn btn-outline btn-sm" href="products.html">Belanja lagi</a></div>' +
           (orders.length
             ? '<div class="table-wrap"><table class="data-table"><thead><tr><th>Order</th><th>Produk</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead><tbody>' + rows + "</tbody></table></div>"

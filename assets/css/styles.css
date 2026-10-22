@@ -129,6 +129,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 
 .section { padding-block: clamp(3.5rem, 7vw, 6rem); }
 .section-sm { padding-block: clamp(2.5rem, 4vw, 3.5rem); }
+.section--flush-top { padding-top: 0; }
 .section-soft { background: var(--bg-soft); }
 .section-brand {
   background:
@@ -1283,6 +1284,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 .article-hero { max-width: 860px; margin-inline: auto; }
 .article-hero h1 { margin-top: 14px; font-size: clamp(1.9rem, 4vw, 3rem); }
 .article-hero-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; color: var(--muted); font-size: .78rem; font-weight: 600; }
+.article-hero-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: #cbd5e1; }
 .article-cover { margin-top: 30px; overflow: hidden; border-radius: var(--radius-lg); box-shadow: var(--shadow); aspect-ratio: 16/8; background: var(--brand-50); }
 .article-cover img { width: 100%; height: 100%; object-fit: cover; }
 .article-content { max-width: 760px; margin: 40px auto 0; }
@@ -1402,7 +1404,8 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 }
 .account-hero h1 { color: #fff; font-size: 1.5rem; }
 .account-hero p { color: #c7d2e5; font-size: .82rem; }
-.account-hero .account-actions { margin-left: auto; }
+.account-hero .account-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+#order-history { scroll-margin-top: calc(var(--header-h) + 18px); }
 
 .library-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .library-card { overflow: hidden; border: 1px solid var(--line-soft); border-radius: var(--radius-lg); background: #fff; box-shadow: var(--shadow-sm); }
@@ -1494,6 +1497,8 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
    16. Admin
    --------------------------------------------------------------- */
 .admin-shell { display: grid; grid-template-columns: 244px minmax(0, 1fr); gap: 24px; align-items: start; }
+.admin-shell--guest { grid-template-columns: minmax(0, 1fr); }
+.admin-shell--guest .admin-sidebar { display: none; }
 .admin-sidebar {
   position: sticky;
   top: calc(var(--header-h) + 18px);
@@ -1540,6 +1545,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 .stat-card .stat-trend--down { color: var(--danger); }
 
 .admin-grid { display: grid; grid-template-columns: 1.35fr .65fr; gap: 18px; margin-top: 18px; }
+.admin-grid--dashboard { grid-template-columns: minmax(0, 1fr); }
 .admin-panel { border: 1px solid var(--line-soft); border-radius: var(--radius-lg); background: #fff; box-shadow: var(--shadow-xs); overflow: hidden; }
 .panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 18px 20px; border-bottom: 1px solid var(--line-soft); }
 .panel-title { color: var(--brand); font-size: .92rem; font-weight: 800; }
@@ -1547,11 +1553,12 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 
 .chart { display: grid; gap: 12px; }
 .chart-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) 56px; align-items: center; gap: 10px; }
-.chart-label { color: var(--muted); font-size: .72rem; font-weight: 700; }
+.admin-grid--dashboard .chart-row { grid-template-columns: minmax(110px, 190px) minmax(0, 1fr) 86px; }
+.chart-label { overflow: hidden; color: var(--muted); font-size: .72rem; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 .chart-track { height: 9px; border-radius: 99px; background: #eef2f7; overflow: hidden; }
 .chart-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand), #3b5cc4); }
 .chart-fill--accent { background: linear-gradient(90deg, var(--accent), #fb923c); }
-.chart-value { color: var(--brand); font-size: .72rem; font-weight: 800; text-align: right; }
+.chart-value { color: var(--brand); font-size: .72rem; font-weight: 800; text-align: right; white-space: nowrap; }
 
 .table-wrap { overflow-x: auto; }
 .data-table { width: 100%; border-collapse: collapse; min-width: 640px; }
@@ -1573,7 +1580,8 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 .data-table .cell-title { color: var(--brand); font-weight: 700; }
 .data-table .cell-sub { display: block; margin-top: 2px; color: var(--faint); font-size: .7rem; }
 .data-table .cell-strong { color: var(--brand); font-weight: 800; white-space: nowrap; }
-.table-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.table-actions { display: flex; flex-wrap: nowrap; gap: 6px; min-width: 176px; }
+.table-actions .btn { white-space: nowrap; }
 .table-toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; padding: 16px 20px; border-bottom: 1px solid var(--line-soft); }
 .table-toolbar .search-field { flex: 1 1 220px; }
 .table-toolbar .filter-field { flex: 0 1 170px; }
@@ -1716,7 +1724,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 .footer-contact { display: grid; gap: 10px; margin-top: 14px; font-size: .84rem; }
 .footer-contact a { color: #dbe4f5; word-break: break-word; }
 .footer-contact a:hover { color: #fdba74; }
-.footer-contact .label { color: #7f91b3; font-size: .62rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.footer-contact .label { display: block; margin-bottom: 2px; color: #7f91b3; font-size: .62rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
 .social-row { display: flex; gap: 8px; margin-top: 14px; }
 .social-link { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 10px; color: #dbe4f5; }
 .social-link:hover { border-color: var(--accent); background: var(--accent); color: #fff; }
@@ -1826,8 +1834,9 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
   .stat-band { grid-template-columns: 1fr; }
   .library-grid { grid-template-columns: 1fr; }
   .stat-grid { grid-template-columns: 1fr 1fr; }
-  .admin-nav { grid-template-columns: 1fr; }
-  .admin-nav a { justify-content: flex-start; }
+  .admin-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-nav a { justify-content: flex-start; padding: 9px 10px; }
+  .admin-grid--dashboard .chart-row { grid-template-columns: minmax(96px, 120px) minmax(0, 1fr) 80px; gap: 8px; }
   .detail-thumbs { grid-template-columns: repeat(3, 1fr); }
   .viewer-head { padding: 16px; }
   .viewer-content { padding: 16px; }

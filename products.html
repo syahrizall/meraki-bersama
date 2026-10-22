@@ -24,13 +24,13 @@
           <p class="page-hero-sub">Kursus, dokumen, video, foto, dan bundle pembelajaran. Semua produk di halaman ini adalah data demo dengan harga fiktif.</p>
           <div class="cluster mt-3">
             <span class="badge badge--demo">Demo katalog</span>
-            <span class="pill">7 produk published</span>
+            <span class="pill" id="catalog-published-count">7 produk published</span>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="catalog-results">
+    <section class="section section--flush-top" id="catalog-results">
       <div class="container">
         <div class="catalog-toolbar" role="search" aria-label="Filter katalog">
           <div class="search-field">
@@ -60,7 +60,7 @@
         </div>
 
         <div class="results-bar">
-          <p class="results-count" id="catalog-count">Memuat produk demo...</p>
+          <p class="results-count" id="catalog-count" aria-live="polite">Memuat produk demo...</p>
           <span class="small muted">Klik kartu untuk melihat detail</span>
         </div>
 
@@ -72,7 +72,7 @@
           </span>
           <h3>Tidak ada produk yang cocok</h3>
           <p>Coba kata kunci lain atau reset filter untuk melihat seluruh katalog demo.</p>
-          <a class="btn btn-outline" href="products.html">Reset filter</a>
+          <button class="btn btn-outline" type="button" id="catalog-empty-reset">Reset filter</button>
         </div>
 
         <nav class="pagination" id="catalog-pagination" aria-label="Navigasi halaman katalog" hidden></nav>

@@ -169,7 +169,7 @@ window.MB_DATA = {
       title: "Leadership Event Documentation Pack",
       shortDescription: "Kumpulan foto dokumentasi seminar dan coaching untuk kebutuhan presentasi internal.",
       description:
-        "<p>Paket dokumentasi visual dari sesi Executive Leadership Seminar dan Antam Mentorship Program. Cocok untuk materi presentasi internal, laporan program, dan konten komunikasi perusahaan.</p><p>Semua foto dalam paket demo ini berasal dari dokumentasi publik Meraki Bersama dan dilisensikan untuk penggunaan demo.</p>",
+        "<p>Paket dokumentasi visual dari sesi Executive Leadership Seminar dan Antam Mentorship Program. Cocok untuk materi presentasi internal, laporan program, dan konten komunikasi perusahaan.</p><p>Semua foto dalam paket demo ini berasal dari dokumentasi publik Meraki Bersama dan dipakai sebagai contoh pada demo statis.</p>",
       category: "Branding",
       type: "photo",
       price: 149000,

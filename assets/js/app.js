@@ -21,12 +21,19 @@
       slot.className = "field-error";
       (field || input.parentElement).appendChild(slot);
     }
+    if (!slot.id) slot.id = (input.id || "field") + "-error";
+    input.setAttribute("aria-describedby", slot.id);
     slot.textContent = message;
   }
 
   function clearErrors(form) {
     MB.qsa(".field-error", form).forEach(function (slot) { slot.textContent = ""; });
-    MB.qsa("[aria-invalid]", form).forEach(function (input) { input.removeAttribute("aria-invalid"); });
+    MB.qsa("[aria-invalid]", form).forEach(function (input) {
+      input.removeAttribute("aria-invalid");
+      if (input.getAttribute("aria-describedby") && input.getAttribute("aria-describedby").slice(-6) === "-error") {
+        input.removeAttribute("aria-describedby");
+      }
+    });
   }
 
   function validEmail(value) {
@@ -162,7 +169,11 @@
     const count = MB.qs("#catalog-count");
     const pagination = MB.qs("#catalog-pagination");
     const empty = MB.qs("#catalog-empty");
+    const emptyReset = MB.qs("#catalog-empty-reset");
+    const publishedCount = MB.qs("#catalog-published-count");
     const base = MB.publishedProducts();
+
+    if (publishedCount) publishedCount.textContent = base.length + " produk published";
 
     const categories = Array.from(new Set(base.map(function (product) { return product.category; }))).sort();
     const types = Array.from(new Set(base.map(function (product) { return product.type; })));
@@ -190,7 +201,7 @@
         if (catalogState.sort === "price-asc") return MB.effectivePrice(a) - MB.effectivePrice(b);
         if (catalogState.sort === "price-desc") return MB.effectivePrice(b) - MB.effectivePrice(a);
         if (catalogState.sort === "title") return a.title.localeCompare(b.title);
-        if (catalogState.sort === "newest") return b.id.localeCompare(a.id);
+        if (catalogState.sort === "newest") return b.id.localeCompare(a.id, undefined, { numeric: true });
         return Number(b.featured) - Number(a.featured);
       });
       return items;
@@ -243,7 +254,7 @@
       catalogState.sort = sort.value;
       render();
     });
-    reset.addEventListener("click", function () {
+    function resetFilters() {
       catalogState.q = "";
       catalogState.category = "all";
       catalogState.type = "all";
@@ -255,7 +266,10 @@
       sort.value = "featured";
       render();
       MB.toast("Filter direset.", "info", "Katalog");
-    });
+    }
+
+    reset.addEventListener("click", resetFilters);
+    if (emptyReset) emptyReset.addEventListener("click", resetFilters);
     pagination.addEventListener("click", function (event) {
       const button = event.target.closest("[data-page]");
       if (!button || button.disabled) return;
@@ -461,6 +475,11 @@
     }
 
     const related = DATA.articles.filter(function (item) { return item.slug !== article.slug; }).slice(0, 3);
+    const plainBody = article.body.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+    const readMinutes = Math.max(2, Math.ceil(plainBody.split(" ").length / 200));
+    const tags = [article.category, "Meraki"].map(function (tag) {
+      return '<span class="tag">' + MB.esc(tag) + "</span>";
+    }).join("");
 
     host.innerHTML =
       '<div class="container">' +
@@ -468,11 +487,11 @@
           '<div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><a href="articles.html">Artikel</a><span class="sep">/</span><span aria-current="page">' + MB.esc(article.category) + "</span></div>" +
           '<span class="badge badge--accent">' + MB.esc(article.category) + "</span>" +
           "<h1>" + MB.esc(article.title) + "</h1>" +
-          '<div class="article-hero-meta"><span>' + MB.dateLong(article.date) + '</span><span class="dot"></span><span>Tim Meraki Bersama</span><span class="dot"></span><span>4 menit baca</span></div>' +
+          '<div class="article-hero-meta"><span>' + MB.dateLong(article.date) + '</span><span class="dot"></span><span>Tim Meraki Bersama</span><span class="dot"></span><span>' + readMinutes + " menit baca</span></div>" +
           '<div class="article-cover"><img src="' + MB.esc(article.thumbnail) + '" alt="' + MB.esc(article.title) + '" data-fallback="Artikel"></div>' +
         "</div>" +
         '<article class="article-content">' + article.body + "</article>" +
-        '<div class="article-footer"><div class="article-tags"><span class="tag">' + MB.esc(article.category) + '</span><span class="tag">Leadership</span><span class="tag">Meraki</span></div><a class="btn btn-outline btn-sm" href="articles.html">' + MB.icon("arrowLeft", 15) + " Semua artikel</a></div>" +
+        '<div class="article-footer"><div class="article-tags">' + tags + '</div><a class="btn btn-outline btn-sm" href="articles.html">' + MB.icon("arrowLeft", 15) + " Semua artikel</a></div>" +
         '<section class="section">' +
           '<div class="section-head"><div><span class="eyebrow">Baca juga</span><h2 class="section-title">Artikel terkait</h2></div></div>' +
           '<div class="grid grid-3">' + related.map(MB.articleCard).join("") + "</div>" +

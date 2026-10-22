@@ -75,7 +75,7 @@
         '<div class="stat-card"><div class="stat-head"><span class="stat-kicker">Penjualan sukses</span><span class="stat-icon">' + MB.icon("chart", 17) + '</span></div><div class="stat-number" style="font-size:1.25rem">' + MB.money(revenue) + '</div><div class="stat-trend">Nilai simulasi</div></div>' +
       "</div>" +
 
-      '<div class="admin-grid">' +
+      '<div class="admin-grid admin-grid--dashboard">' +
         '<section class="admin-panel">' +
           '<div class="panel-head"><h2 class="panel-title">Order terbaru</h2><a class="btn btn-outline btn-sm" href="admin-orders.html">Semua order</a></div>' +
           '<div class="table-wrap"><table class="data-table"><thead><tr><th>Order</th><th>Pembeli</th><th>Total</th><th>Status</th></tr></thead><tbody>' + recentRows + "</tbody></table></div>" +
@@ -91,13 +91,14 @@
         "</section>" +
       "</div>" +
 
-      '<div class="admin-grid">' +
+      '<div class="admin-grid admin-grid--dashboard">' +
         '<section class="admin-panel">' +
           '<div class="panel-head"><h2 class="panel-title">Pendapatan per produk</h2><span class="badge badge--demo">Mock</span></div>' +
           '<div class="panel-body"><div class="chart">' +
             (topProducts.length
               ? topProducts.map(function (item) {
-                  return '<div class="chart-row"><span class="chart-label">' + MB.esc(productTitle(item.id).slice(0, 18)) + '</span><div class="chart-track"><div class="chart-fill" style="width:' + Math.round((item.amount / maxRevenue) * 100) + '%"></div></div><span class="chart-value">' + MB.money(item.amount) + "</span></div>";
+                  const title = productTitle(item.id);
+                  return '<div class="chart-row"><span class="chart-label" title="' + MB.esc(title) + '">' + MB.esc(title) + '</span><div class="chart-track"><div class="chart-fill" style="width:' + Math.round((item.amount / maxRevenue) * 100) + '%"></div></div><span class="chart-value">' + MB.money(item.amount) + "</span></div>";
                 }).join("")
               : '<p class="muted small">Belum ada penjualan sukses pada data demo.</p>') +
           "</div></div>" +

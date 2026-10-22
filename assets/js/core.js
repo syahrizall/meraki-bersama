@@ -62,9 +62,32 @@
 
   const state = loadState();
 
+  /* Fingerprint demo saja, bukan fungsi keamanan atau password hashing produksi. */
+  function demoPasswordHash(value) {
+    let hash = 2166136261;
+    const text = "meraki-demo-v1|" + String(value == null ? "" : value);
+    for (let index = 0; index < text.length; index += 1) {
+      hash ^= text.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0).toString(36);
+  }
+
+  function serializableState() {
+    const payload = clone(state);
+    payload.users = payload.users.map(function (user) {
+      const copy = Object.assign({}, user);
+      const password = copy.password;
+      delete copy.password;
+      copy.passwordHash = password != null ? demoPasswordHash(password) : (copy.passwordHash || "");
+      return copy;
+    });
+    return payload;
+  }
+
   function save() {
     state.savedAt = Date.now();
-    const serialized = JSON.stringify(state);
+    const serialized = JSON.stringify(serializableState());
     try {
       window.localStorage.setItem(STORAGE_KEY, serialized);
     } catch (error) {
@@ -76,6 +99,12 @@
     } catch (error) {
       /* window.name tidak tersedia. Demo tetap berjalan di memori. */
     }
+  }
+
+  function verifyPassword(user, value) {
+    if (!user) return false;
+    if (typeof user.password === "string") return user.password === value;
+    return !!user.passwordHash && user.passwordHash === demoPasswordHash(value);
   }
 
   function currentUser() {
@@ -665,7 +694,7 @@
             "<li>" + icon("check", 17) + "<span>Login hanya simulasi frontend; tidak ada autentikasi server.</span></li>" +
             "<li>" + icon("check", 17) + "<span>Tidak ada email, notifikasi, atau pesan yang benar-benar dikirim.</span></li>" +
             "<li>" + icon("check", 17) + "<span>File materi tidak diamankan; jangan gunakan untuk konten privat.</span></li>" +
-            "<li>" + icon("check", 17) + "<span>Perubahan admin disimpan di localStorage browser dan dapat di-reset.</span></li>" +
+            "<li>" + icon("check", 17) + "<span>Perubahan admin disimpan di penyimpanan lokal browser dan dapat di-reset.</span></li>" +
           "</ul>" +
           '<p class="small muted">Jangan memasukkan data pribadi, password asli, atau informasi rahasia ke dalam demo ini.</p>' +
         "</div>",
@@ -720,7 +749,7 @@
       const fillUser = target.closest("[data-fill-user]");
       if (fillUser) {
         event.preventDefault();
-        const user = state.users.find((item) => item.role === fillUser.dataset.fillUser);
+        const user = DATA.users.find((item) => item.role === fillUser.dataset.fillUser);
         const email = document.getElementById("login-email");
         const password = document.getElementById("login-password");
         if (user && email && password) {
@@ -782,7 +811,12 @@
     renderFooter();
     bindGlobal();
     if (PAGE === "admin-dashboard" || PAGE === "admin-products" || PAGE === "admin-orders") {
-      adminSidebar(PAGE.replace("admin-", ""));
+      if (isAdmin()) {
+        adminSidebar(PAGE.replace("admin-", ""));
+      } else {
+        const shell = qs(".admin-shell");
+        if (shell) shell.classList.add("admin-shell--guest");
+      }
     }
     const controller = pages[PAGE];
     if (controller) controller();
@@ -795,6 +829,7 @@
     save: save,
     currentUser: currentUser,
     isAdmin: isAdmin,
+    verifyPassword: verifyPassword,
     loginAs: loginAs,
     logout: logout,
     qs: qs,

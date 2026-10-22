@@ -113,15 +113,28 @@
     const root = MB.qs("#viewer-root");
     if (!root) return;
     const user = MB.currentUser();
+    const requestedSlug = MB.param("product");
+    const requestedItem = MB.param("item");
+    const viewerTarget = "learning-viewer.html" +
+      (requestedSlug ? "?product=" + encodeURIComponent(requestedSlug) + (requestedItem ? "&item=" + encodeURIComponent(requestedItem) : "") : "");
 
     if (!user) {
-      root.innerHTML = authGate("Learning viewer menampilkan materi dari produk yang Anda miliki. Masuk untuk melanjutkan.", "my-library.html");
+      root.innerHTML = authGate("Learning viewer menampilkan materi dari produk yang Anda miliki. Masuk untuk melanjutkan.", viewerTarget);
       return;
     }
 
-    const requestedSlug = MB.param("product");
     const owned = MB.ownedProducts(user.email);
     const initial = requestedSlug ? MB.productBySlug(requestedSlug) : owned[0];
+
+    if (requestedSlug && !initial) {
+      root.innerHTML = MB.notFoundHTML(
+        "Materi tidak ditemukan",
+        "Produk yang Anda cari tidak tersedia pada data demo. Silakan kembali ke My Library.",
+        "my-library.html",
+        "Kembali ke My Library"
+      );
+      return;
+    }
 
     if (!initial) {
       root.innerHTML = MB.emptyState({
@@ -146,8 +159,12 @@
             '<p class="detail-sub">' + MB.esc(initial.shortDescription) + "</p>" +
             '<div class="detail-price"><span class="now">' + MB.money(MB.effectivePrice(initial)) + "</span></div>" +
             '<div class="notice-box">' + MB.icon("lock", 19) + "<div><strong>Materi terkunci pada simulasi.</strong> Produk ini belum ada di library akun demo Anda.</div></div>" +
-            '<div class="cluster mt-2"><button class="btn btn-primary" type="button" data-buy="' + MB.esc(initial.slug) + '">Beli produk</button>' +
-            '<a class="btn btn-outline" href="my-library.html">Kembali ke library</a></div>' +
+            '<div class="cluster mt-2">' +
+              (initial.status === "published"
+                ? '<button class="btn btn-primary" type="button" data-buy="' + MB.esc(initial.slug) + '">Beli produk</button>'
+                : '<button class="btn btn-primary" type="button" disabled>Belum dijual</button>') +
+              '<a class="btn btn-outline" href="my-library.html">Kembali ke library</a>' +
+            "</div>" +
           "</div>" +
         "</div>";
 
