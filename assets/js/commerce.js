@@ -52,15 +52,20 @@
   }
 
   function authGate(message) {
-    return '<div class="empty-state">' +
-      '<span class="empty-icon">' + MB.icon("lock", 26) + "</span>" +
-      "<h3>Masuk ke akun demo</h3>" +
-      "<p>" + MB.esc(message) + "</p>" +
-      '<div class="cluster" style="justify-content:center">' +
-        '<a class="btn btn-primary" href="login.html?next=' + encodeURIComponent("account.html") + '">Masuk</a>' +
-        '<button class="btn btn-outline" type="button" data-demo-login="customer">Masuk sebagai Demo Customer</button>' +
+    return '<div class="member-auth">' +
+      '<div class="member-auth-card">' +
+        MB.brand() +
+        '<span class="app-auth-icon">' + MB.icon("lock", 28) + "</span>" +
+        '<span class="eyebrow">Area anggota</span>' +
+        "<h1>Masuk ke akun demo</h1>" +
+        "<p>" + MB.esc(message) + "</p>" +
+        '<div class="app-auth-actions">' +
+          '<a class="btn btn-primary" href="login.html?next=' + encodeURIComponent("account.html") + '">Masuk ke akun</a>' +
+          '<button class="btn btn-outline" type="button" data-demo-login="customer">Masuk sebagai Demo Customer</button>' +
+        "</div>" +
+        '<p class="field-hint">customer@meraki.demo · demo1234</p>' +
+        '<a class="member-auth-back" href="index.html">Kembali ke situs</a>' +
       "</div>" +
-      '<p class="field-hint">customer@meraki.demo · demo1234</p>' +
     "</div>";
   }
 

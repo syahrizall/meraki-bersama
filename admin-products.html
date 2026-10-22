@@ -11,25 +11,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body data-page="admin-products">
+<body data-page="admin-products" class="app-body admin-area">
   <a class="skip-link" href="#main">Lewati ke konten utama</a>
-  <header class="site-header" id="site-header"></header>
-
-  <main id="main" class="section">
-    <div class="container">
-      <div class="admin-shell">
-        <aside id="admin-sidebar" class="admin-sidebar" aria-label="Navigasi admin"></aside>
-        <div class="admin-main">
+  <div class="admin-app">
+    <aside id="admin-sidebar" class="app-sidebar app-sidebar--admin admin-sidebar" aria-label="Navigasi admin"></aside>
+    <div class="app-workspace">
+      <header class="app-topbar app-topbar--admin" id="admin-topbar"></header>
+      <main id="main" class="app-main">
+        <div class="admin-content">
           <div id="admin-root"></div>
           <noscript>
             <div class="alert alert--warning">Aktifkan JavaScript untuk membuka manajemen produk.</div>
           </noscript>
         </div>
-      </div>
+      </main>
     </div>
-  </main>
-
-  <footer class="site-footer" id="site-footer"></footer>
+  </div>
+  <div class="app-overlay" id="app-overlay" hidden></div>
 
   <script src="assets/js/mock-data.js"></script>
   <script src="assets/js/core.js"></script>

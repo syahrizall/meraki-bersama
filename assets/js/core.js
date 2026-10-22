@@ -352,7 +352,7 @@
 
   function serviceCard(service, index) {
     return (
-      '<a class="service-card" href="service-detail.html?slug=' + encodeURIComponent(service.slug) + '">' +
+      '<a class="service-card" id="service-' + esc(service.slug) + '" href="service-detail.html?slug=' + encodeURIComponent(service.slug) + '">' +
         '<span class="service-num">' + String(index + 1).padStart(2, "0") + "</span>" +
         '<h3 class="service-title">' + esc(service.title) + "</h3>" +
         '<p class="service-desc">' + esc(service.shortDescription) + "</p>" +
@@ -499,6 +499,190 @@
     );
   }
 
+  function initials(name) {
+    return String(name || "Meraki")
+      .split(" ")
+      .filter(Boolean)
+      .map(function (part) { return part.charAt(0); })
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+  }
+
+  function appTopbarBrand(href, context) {
+    return (
+      '<a class="brand app-brand" href="' + esc(href || "index.html") + '" aria-label="Meraki Bersama">' +
+        '<span class="brand-mark" aria-hidden="true">M</span>' +
+        '<span class="brand-word"><strong>Meraki</strong><span>Bersama</span></span>' +
+      "</a>" +
+      (context ? '<span class="app-context">' + esc(context) + "</span>" : "")
+    );
+  }
+
+  function bindAppDrawer(toggleId, panelId, overlayId) {
+    const toggle = qs("#" + toggleId);
+    const panel = qs("#" + panelId);
+    const overlay = qs("#" + overlayId);
+    if (!toggle || !panel) return;
+
+    function closeDrawer() {
+      panel.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+      document.body.classList.remove("drawer-open");
+      if (overlay) {
+        overlay.classList.remove("is-open");
+        overlay.hidden = true;
+      }
+    }
+
+    function openDrawer() {
+      panel.classList.add("is-open");
+      toggle.setAttribute("aria-expanded", "true");
+      document.body.classList.add("drawer-open");
+      if (overlay) {
+        overlay.hidden = false;
+        window.requestAnimationFrame(function () { overlay.classList.add("is-open"); });
+      }
+      const focusTarget = panel.querySelector("a, button");
+      if (focusTarget) window.setTimeout(function () { focusTarget.focus(); }, 40);
+    }
+
+    toggle.addEventListener("click", function () {
+      if (panel.classList.contains("is-open")) closeDrawer();
+      else openDrawer();
+    });
+    if (overlay) overlay.addEventListener("click", closeDrawer);
+    qsa("[data-drawer-close]", panel).forEach(function (button) {
+      button.addEventListener("click", closeDrawer);
+    });
+    qsa("a", panel).forEach(function (link) {
+      link.addEventListener("click", closeDrawer);
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && panel.classList.contains("is-open")) {
+        closeDrawer();
+        toggle.focus();
+      }
+    });
+  }
+
+  function renderAdminTopbar(active) {
+    const host = qs("#admin-topbar");
+    if (!host) return;
+    const user = currentUser();
+    const labels = { dashboard: "Dashboard", products: "Produk", orders: "Order" };
+    host.innerHTML =
+      '<div class="app-topbar-inner">' +
+        '<button class="app-menu-btn" id="admin-nav-toggle" type="button" aria-label="Buka navigasi admin" aria-expanded="false" aria-controls="admin-sidebar">' +
+          icon("menu", 22) +
+        "</button>" +
+        '<div class="app-topbar-copy"><span>Admin demo</span><strong>' + esc(labels[active] || "Panel") + "</strong></div>" +
+        '<div class="app-topbar-actions">' +
+          '<a class="app-top-link" href="index.html">' + icon("external", 15) + " Lihat situs</a>" +
+          (user
+            ? '<span class="app-user"><span class="app-avatar">' + esc(initials(user.name)) + '</span><span class="app-user-text"><strong>' + esc(user.name) + "</strong><span>Administrator</span></span></span>"
+            : "") +
+          '<button class="app-icon-btn" type="button" data-action="logout" aria-label="Keluar dari admin demo" title="Keluar">' + icon("logout", 18) + "</button>" +
+        "</div>" +
+      "</div>";
+  }
+
+  function renderMemberTopbar() {
+    const host = qs("#member-topbar");
+    if (!host) return;
+    const user = currentUser();
+    const hasSidebar = !!qs("#member-sidebar");
+    const topnav = !hasSidebar && user
+      ? '<nav class="app-topnav" aria-label="Navigasi anggota"><a href="account.html">Ringkasan</a><a href="my-library.html">My Library</a></nav>'
+      : "";
+    const menu = user && hasSidebar
+      ? '<button class="app-menu-btn" id="member-nav-toggle" type="button" aria-label="Buka navigasi akun" aria-expanded="false" aria-controls="member-sidebar">' + icon("menu", 22) + "</button>"
+      : "";
+
+    const loginNext = PAGE === "learning-viewer"
+      ? "learning-viewer.html" + (window.location.search || "")
+      : PAGE === "my-library" ? "my-library.html" : "account.html";
+    const actions = user
+      ? '<a class="app-top-link app-top-link--desktop" href="index.html">Lihat situs</a>' +
+        '<a class="app-user" href="account.html"><span class="app-avatar">' + esc(initials(user.name)) + '</span><span class="app-user-text"><strong>' + esc(user.name) + "</strong><span>" + (user.role === "admin" ? "Admin demo" : "Customer demo") + "</span></span></a>" +
+        '<button class="app-icon-btn" type="button" data-action="logout" aria-label="Keluar dari akun demo" title="Keluar">' + icon("logout", 18) + "</button>"
+      : '<a class="app-top-link" href="index.html">Lihat situs</a>' +
+        '<a class="btn btn-primary btn-sm" href="login.html?next=' + encodeURIComponent(loginNext) + '">Masuk</a>';
+
+    host.innerHTML =
+      '<div class="app-topbar-inner">' +
+        menu +
+        appTopbarBrand(user ? "account.html" : "index.html", "Area anggota") +
+        topnav +
+        '<div class="app-topbar-actions">' + actions + "</div>" +
+      "</div>";
+  }
+
+  function renderMemberSidebar(active) {
+    const host = qs("#member-sidebar");
+    const user = currentUser();
+    if (!host || !user) return;
+    const demoRole = user.role === "admin" ? "Admin demo" : "Customer demo";
+
+    function navItem(key, label, iconName, href) {
+      const isActive = key === active;
+      return '<a class="' + (isActive ? "is-active" : "") + '" href="' + href + '"' +
+        (isActive ? ' aria-current="page"' : "") + ">" + icon(iconName, 17) + "<span>" + label + "</span></a>";
+    }
+
+    host.innerHTML =
+      '<div class="member-profile">' +
+        '<button class="app-drawer-close" type="button" data-drawer-close aria-label="Tutup navigasi">' + icon("close", 18) + "</button>" +
+        '<span class="app-avatar app-avatar--lg">' + esc(initials(user.name)) + "</span>" +
+        '<div class="member-profile-copy"><strong>' + esc(user.name) + "</strong><span>" + esc(user.email) + "</span></div>" +
+        '<span class="badge badge--demo">' + demoRole + "</span>" +
+      "</div>" +
+      '<nav class="member-nav" aria-label="Navigasi akun">' +
+        navItem("account", "Ringkasan", "dashboard", "account.html") +
+        '<a href="account.html#order-history">' + icon("receipt", 17) + "<span>Order &amp; pembayaran</span></a>" +
+        navItem("my-library", "My Library", "book", "my-library.html") +
+        '<a href="products.html">' + icon("package", 17) + "<span>Jelajahi katalog</span></a>" +
+        (user.role === "admin"
+          ? '<a href="admin-dashboard.html">' + icon("dashboard", 17) + "<span>Admin panel</span></a>"
+          : "") +
+      "</nav>" +
+      '<div class="member-sidebar-foot">' +
+        '<a class="member-side-link" href="index.html">' + icon("external", 16) + " Lihat website</a>" +
+        '<button class="member-side-link" type="button" data-action="logout">' + icon("logout", 16) + " Keluar</button>" +
+        '<p>Data akun dan progres hanya tersimpan di browser demo ini.</p>' +
+      "</div>";
+  }
+
+  function renderCommerceTopbar(active) {
+    const host = qs("#commerce-topbar");
+    if (!host) return;
+    const user = currentUser();
+    const isResult = active === "payment-result";
+    const loginNext = active === "checkout" ? "checkout.html" + (window.location.search || "") : "account.html";
+    host.innerHTML =
+      '<div class="app-topbar-inner">' +
+        appTopbarBrand("index.html", isResult ? "Status pembayaran" : "Checkout demo") +
+        '<div class="app-topbar-actions">' +
+          '<a class="app-top-link" href="' + (isResult ? "account.html" : "products.html") + '">' +
+            icon("arrowLeft", 15) + (isResult ? " Kembali ke akun" : " Kembali ke katalog") +
+          "</a>" +
+          (user
+            ? '<a class="app-user" href="account.html"><span class="app-avatar">' + esc(initials(user.name)) + '</span><span class="app-user-text"><strong>' + esc(user.name) + "</strong><span>" + (user.role === "admin" ? "Admin demo" : "Customer demo") + "</span></span></a>"
+            : '<a class="btn btn-outline btn-sm" href="login.html?next=' + encodeURIComponent(loginNext) + '">Masuk</a>') +
+        "</div>" +
+      "</div>";
+  }
+
+  function renderCommerceFooter() {
+    const host = qs("#commerce-footer");
+    if (!host) return;
+    host.innerHTML =
+      '<div class="commerce-footer-inner">' +
+        "<p><strong>Meraki Bersama</strong> · Proof of concept statis. Tidak ada pembayaran atau data nyata yang diproses.</p>" +
+        '<div class="commerce-footer-links"><a href="products.html">Katalog</a><a href="account.html">Akun demo</a><a href="index.html" data-action="demo-policy">Kebijakan demo</a></div>' +
+      "</div>";
+  }
+
   function renderHeader() {
     const host = qs("#site-header");
     if (!host) return;
@@ -614,29 +798,47 @@
       { key: "products", label: "Produk", href: "admin-products.html", icon: "package" },
       { key: "orders", label: "Order", href: "admin-orders.html", icon: "receipt" }
     ];
-    host.className = "admin-sidebar";
+    host.classList.add("admin-sidebar");
     host.innerHTML =
-      '<div class="admin-brand"><span class="brand-mark" aria-hidden="true">M</span><div><strong>Meraki Admin</strong><span>Demo Panel</span></div></div>' +
+      '<div class="admin-brand">' +
+        '<span class="brand-mark" aria-hidden="true">M</span>' +
+        '<div><strong>Meraki Admin</strong><span>Demo Panel</span></div>' +
+        '<button class="app-drawer-close" type="button" data-drawer-close aria-label="Tutup navigasi">' + icon("close", 18) + "</button>" +
+      "</div>" +
       '<nav class="admin-nav" aria-label="Navigasi admin">' +
         items.map(function (item) {
           return '<a class="' + (item.key === active ? "is-active" : "") + '" href="' + item.href + '"' +
-            (item.key === active ? ' aria-current="page"' : "") + ">" + icon(item.icon, 17) + item.label + "</a>";
+            (item.key === active ? ' aria-current="page"' : "") + ">" + icon(item.icon, 17) + "<span>" + item.label + "</span></a>";
         }).join("") +
-        '<a href="index.html">' + icon("external", 17) + "Lihat Situs</a>" +
-        '<a href="index.html" data-action="logout">' + icon("logout", 17) + "Keluar</a>" +
+        '<a href="products.html">' + icon("external", 17) + "<span>Lihat Katalog</span></a>" +
+        '<a href="index.html" data-action="logout">' + icon("logout", 17) + "<span>Keluar</span></a>" +
       "</nav>" +
-      '<div class="admin-foot">' + esc(user ? user.name : "Demo Admin") + "<br>Data demo · tidak tersimpan di server</div>";
+      '<div class="admin-foot"><strong>' + esc(user ? user.name : "Demo Admin") + "</strong><span>Data demo · tersimpan lokal di browser ini</span></div>";
   }
 
   function adminGate(host) {
     if (isAdmin()) return true;
+    const user = currentUser();
     host.innerHTML =
-      '<div class="empty-state">' +
-        '<span class="empty-icon">' + icon("lock", 26) + "</span>" +
-        "<h3>Area admin demo</h3>" +
-        "<p>Masuk sebagai admin demo untuk melihat dashboard, mengelola produk, dan memeriksa order. Data di sini hanya simulasi.</p>" +
-        '<button class="btn btn-primary" type="button" data-demo-login="admin">Masuk sebagai Admin Demo</button>' +
-        '<p class="field-hint">admin@meraki.demo · admin1234</p>' +
+      '<div class="app-auth-page">' +
+        '<div class="app-auth-card admin-auth-card">' +
+          brandHTML() +
+          '<span class="eyebrow">Admin demo</span>' +
+          "<h1>" + (user ? "Akses admin diperlukan" : "Masuk ke panel admin") + "</h1>" +
+          "<p>" +
+            (user
+              ? "Anda sedang masuk sebagai <strong>" + esc(user.name) + "</strong> (customer). Panel admin hanya dapat dibuka dengan akun admin demo."
+              : "Kelola produk, order, dan ringkasan performa lewat panel demo. Seluruh data bersifat fiktif dan tersimpan lokal.") +
+          "</p>" +
+          '<div class="app-auth-actions">' +
+            '<button class="btn btn-primary" type="button" data-demo-login="admin">' + (user ? "Beralih ke Admin Demo" : "Masuk sebagai Admin Demo") + "</button>" +
+            (user
+              ? '<a class="btn btn-outline" href="account.html">Kembali ke akun</a>'
+              : '<a class="btn btn-outline" href="login.html?next=admin-dashboard.html">Masuk lewat halaman login</a>') +
+          "</div>" +
+          '<p class="field-hint">admin@meraki.demo · admin1234</p>' +
+          '<div class="app-auth-links"><a href="index.html">Kembali ke situs</a><a href="products.html">Lihat katalog</a></div>' +
+        "</div>" +
       "</div>";
     return false;
   }
@@ -801,23 +1003,40 @@
      Boot & public API
      --------------------------------------------------------------- */
   const pages = {};
+  const ADMIN_PAGES = ["admin-dashboard", "admin-products", "admin-orders"];
+  const MEMBER_PAGES = ["account", "my-library", "learning-viewer"];
+  const COMMERCE_PAGES = ["checkout", "payment-result"];
 
   function registerPage(name, controller) {
     pages[name] = controller;
   }
 
   function boot() {
-    renderHeader();
-    renderFooter();
-    bindGlobal();
-    if (PAGE === "admin-dashboard" || PAGE === "admin-products" || PAGE === "admin-orders") {
+    if (ADMIN_PAGES.indexOf(PAGE) !== -1) {
       if (isAdmin()) {
         adminSidebar(PAGE.replace("admin-", ""));
+        renderAdminTopbar(PAGE.replace("admin-", ""));
+        bindAppDrawer("admin-nav-toggle", "admin-sidebar", "app-overlay");
       } else {
-        const shell = qs(".admin-shell");
-        if (shell) shell.classList.add("admin-shell--guest");
+        document.body.classList.add("is-admin-guest");
       }
+    } else if (MEMBER_PAGES.indexOf(PAGE) !== -1) {
+      renderMemberTopbar();
+      if (currentUser()) {
+        renderMemberSidebar(PAGE);
+        if (qs("#member-sidebar")) bindAppDrawer("member-nav-toggle", "member-sidebar", "app-overlay");
+      } else {
+        document.body.classList.add("is-member-guest");
+      }
+    } else if (COMMERCE_PAGES.indexOf(PAGE) !== -1) {
+      renderCommerceTopbar(PAGE);
+      renderCommerceFooter();
+    } else {
+      renderHeader();
+      renderFooter();
     }
+
+    bindGlobal();
     const controller = pages[PAGE];
     if (controller) controller();
   }
@@ -856,6 +1075,7 @@
     progressFor: progressFor,
     completion: completion,
     safeNext: safeNext,
+    brand: brandHTML,
     productCard: productCard,
     articleCard: articleCard,
     serviceCard: serviceCard,
@@ -867,6 +1087,9 @@
     renderFooter: renderFooter,
     adminSidebar: adminSidebar,
     adminGate: adminGate,
+    renderAdminTopbar: renderAdminTopbar,
+    renderMemberTopbar: renderMemberTopbar,
+    renderMemberSidebar: renderMemberSidebar,
     notFoundHTML: notFoundHTML,
     emptyState: emptyState,
     buyProduct: buyProduct,

@@ -11,21 +11,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body data-page="account">
+<body data-page="account" class="app-body member-area">
   <a class="skip-link" href="#main">Lewati ke konten utama</a>
-  <header class="site-header" id="site-header"></header>
+  <header class="app-topbar member-topbar" id="member-topbar"></header>
 
-  <main id="main" class="section">
-    <div class="container">
-      <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span aria-current="page">Akun Saya</span></div>
-      <div id="account-root"></div>
-      <noscript>
-        <div class="alert alert--warning">Aktifkan JavaScript untuk melihat akun demo.</div>
-      </noscript>
-    </div>
-  </main>
-
-  <footer class="site-footer" id="site-footer"></footer>
+  <div class="member-shell app-shell app-shell--member">
+    <aside id="member-sidebar" class="app-sidebar member-sidebar" aria-label="Navigasi akun"></aside>
+    <main id="main" class="app-main member-main">
+      <div class="member-content">
+        <div id="account-root"></div>
+        <noscript>
+          <div class="alert alert--warning">Aktifkan JavaScript untuk melihat akun demo.</div>
+        </noscript>
+      </div>
+    </main>
+  </div>
+  <div class="app-overlay" id="app-overlay" hidden></div>
 
   <script src="assets/js/mock-data.js"></script>
   <script src="assets/js/core.js"></script>
