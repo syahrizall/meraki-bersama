@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog Digital — Meraki Bersama</title>
+  <meta name="description" content="Katalog produk digital Meraki Bersama: kursus, e-book, video, foto, dan bundle kepemimpinan.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231e3a8a'/%3E%3Ctext x='32' y='45' font-family='Arial' font-size='38' font-weight='bold' fill='white' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="products">
+  <a class="skip-link" href="#main">Lewati ke konten utama</a>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main">
+    <section class="section-sm">
+      <div class="container">
+        <div class="page-hero page-hero--soft">
+          <span class="eyebrow">Katalog digital</span>
+          <h1 class="page-hero-title">Materi kepemimpinan, kapan pun Anda butuh</h1>
+          <p class="page-hero-sub">Kursus, dokumen, video, foto, dan bundle pembelajaran. Semua produk di halaman ini adalah data demo dengan harga fiktif.</p>
+          <div class="cluster mt-3">
+            <span class="badge badge--demo">Demo katalog</span>
+            <span class="pill">7 produk published</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="catalog-results">
+      <div class="container">
+        <div class="catalog-toolbar" role="search" aria-label="Filter katalog">
+          <div class="search-field">
+            <label class="sr-only" for="catalog-search">Cari produk</label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+            <input class="input" id="catalog-search" type="search" placeholder="Cari kursus, e-book, topik...">
+          </div>
+          <div class="filter-field">
+            <label for="catalog-category">Kategori</label>
+            <select class="select" id="catalog-category"></select>
+          </div>
+          <div class="filter-field">
+            <label for="catalog-type">Tipe konten</label>
+            <select class="select" id="catalog-type"></select>
+          </div>
+          <div class="filter-field">
+            <label for="catalog-sort">Urutkan</label>
+            <select class="select" id="catalog-sort">
+              <option value="featured">Unggulan</option>
+              <option value="newest">Terbaru</option>
+              <option value="price-asc">Harga terendah</option>
+              <option value="price-desc">Harga tertinggi</option>
+              <option value="title">Nama A–Z</option>
+            </select>
+          </div>
+          <button class="btn btn-outline btn-sm toolbar-reset" id="catalog-reset" type="button">Reset filter</button>
+        </div>
+
+        <div class="results-bar">
+          <p class="results-count" id="catalog-count">Memuat produk demo...</p>
+          <span class="small muted">Klik kartu untuk melihat detail</span>
+        </div>
+
+        <div class="grid grid-3" id="catalog-grid"></div>
+
+        <div class="empty-state" id="catalog-empty" hidden>
+          <span class="empty-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          </span>
+          <h3>Tidak ada produk yang cocok</h3>
+          <p>Coba kata kunci lain atau reset filter untuk melihat seluruh katalog demo.</p>
+          <a class="btn btn-outline" href="products.html">Reset filter</a>
+        </div>
+
+        <nav class="pagination" id="catalog-pagination" aria-label="Navigasi halaman katalog" hidden></nav>
+
+        <div class="notice-box mt-4">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg>
+          <div><strong>Simulasi katalog.</strong> Harga, stok, dan materi tidak nyata. Tombol beli akan membawa Anda ke alur login dan checkout demo.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <noscript>
+    <div class="container" style="padding:20px">
+      <div class="alert alert--warning">Aktifkan JavaScript untuk memuat katalog dan filter.</div>
+    </div>
+  </noscript>
+
+  <script src="assets/js/mock-data.js"></script>
+  <script src="assets/js/core.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

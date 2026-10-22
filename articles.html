@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artikel &amp; Insight — Meraki Bersama</title>
+  <meta name="description" content="Artikel dan insight seputar kepemimpinan, coaching, dan pengembangan tim dari Meraki Bersama.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231e3a8a'/%3E%3Ctext x='32' y='45' font-family='Arial' font-size='38' font-weight='bold' fill='white' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="articles">
+  <a class="skip-link" href="#main">Lewati ke konten utama</a>
+  <header class="site-header" id="site-header"></header>
+
+  <main id="main">
+    <section class="section-sm">
+      <div class="container">
+        <div class="page-hero page-hero--soft">
+          <span class="eyebrow">Artikel &amp; insight</span>
+          <h1 class="page-hero-title">Catatan dari ruang coaching</h1>
+          <p class="page-hero-sub">Refleksi, praktik, dan cerita seputar kepemimpinan, budaya tim, dan pertumbuhan personal. Seluruh artikel adalah konten demo.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="flex-between mb-3" style="flex-wrap:wrap;align-items:flex-end">
+          <div class="search-field" style="flex:1 1 300px;max-width:420px">
+            <label class="sr-only" for="article-search">Cari artikel</label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+            <input class="input" id="article-search" type="search" placeholder="Cari judul atau topik...">
+          </div>
+          <span class="small muted" id="articles-count">Memuat artikel demo...</span>
+        </div>
+
+        <div class="filter-chips mb-3" id="article-chips" aria-label="Filter kategori artikel"></div>
+
+        <div class="grid grid-3" id="articles-grid"></div>
+
+        <div class="empty-state" id="articles-empty" hidden>
+          <span class="empty-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"></path><path d="M8 3v18"></path></svg>
+          </span>
+          <h3>Tidak ada artikel yang cocok</h3>
+          <p>Coba kata kunci lain atau pilih kategori “Semua”.</p>
+          <a class="btn btn-outline" href="articles.html">Reset pencarian</a>
+        </div>
+
+        <div class="notice-box mt-4">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg>
+          <div><strong>Konten demo.</strong> Artikel ditulis untuk keperluan POC dan tidak mewakili publikasi resmi perusahaan.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <noscript>
+    <div class="container" style="padding:20px">
+      <div class="alert alert--warning">Aktifkan JavaScript untuk memuat daftar artikel.</div>
+    </div>
+  </noscript>
+
+  <script src="assets/js/mock-data.js"></script>
+  <script src="assets/js/core.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
